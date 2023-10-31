@@ -1,23 +1,27 @@
-package entities;
+package com.example.Hotel.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 public class Habitacion {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String numero;
+    private int numero;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "tipo_habitacion_id")
+    @Cascade(CascadeType.SAVE_UPDATE)
     private TipoHabitacion tipoHabitacion;
 
-    private BigDecimal precioBase;
+    private BigDecimal precio;
 
     @OneToMany(mappedBy = "habitacion")
     private List<Reserva> reservas;
@@ -25,10 +29,10 @@ public class Habitacion {
     public Habitacion() {
     }
 
-    public Habitacion(String numero, TipoHabitacion tipoHabitacion, BigDecimal precioBase) {
+    public Habitacion(int numero, TipoHabitacion tipoHabitacion, BigDecimal precio) {
         this.numero = numero;
         this.tipoHabitacion = tipoHabitacion;
-        this.precioBase = precioBase;
+        this.precio = precio;
     }
 
     public Long getId() {
@@ -39,11 +43,11 @@ public class Habitacion {
         this.id = id;
     }
 
-    public String getNumero() {
+    public int getNumero() {
         return numero;
     }
 
-    public void setNumero(String numero) {
+    public void setNumero(int numero) {
         this.numero = numero;
     }
 
@@ -55,12 +59,12 @@ public class Habitacion {
         this.tipoHabitacion = tipoHabitacion;
     }
 
-    public BigDecimal getPrecioBase() {
-        return precioBase;
+    public BigDecimal getPrecio() {
+        return precio;
     }
 
-    public void setPrecioBase(BigDecimal precioBase) {
-        this.precioBase = precioBase;
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
     }
 
     public List<Reserva> getReservas() {
@@ -74,7 +78,7 @@ public class Habitacion {
     public boolean estaDisponibleParaFechas(LocalDate fechaInicio, LocalDate fechaFin) {
         for (Reserva reserva : reservas) {
             LocalDate reservaInicio = reserva.getFechaReserva();
-            LocalDate reservaFin = reserva.getFechaReserva().plusDays(1); // Suponiendo que las reservas son por día
+            LocalDate reservaFin = reservaInicio.plusDays(1); // Suponiendo que las reservas son por día
             if ((fechaInicio.isEqual(reservaInicio) || fechaInicio.isAfter(reservaInicio)) &&
                     (fechaInicio.isBefore(reservaFin) || fechaInicio.isEqual(reservaFin)) &&
                     (fechaFin.isAfter(reservaInicio) || fechaFin.isEqual(reservaInicio))) {
@@ -83,6 +87,6 @@ public class Habitacion {
         }
         return true;
     }
-
 }
+
 

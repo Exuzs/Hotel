@@ -1,4 +1,4 @@
-package entities;
+package com.example.Hotel.entities;
 
 import jakarta.persistence.*;
 import java.util.List;
@@ -48,4 +48,5 @@ public class TipoHabitacion {
         this.habitaciones = habitaciones;
     }
 }
+
 
